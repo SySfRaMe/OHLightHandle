@@ -1,0 +1,12 @@
+//Created by Lasse Byrnak
+
+if (Bulb1_Scene.state != 3 && Bulb1_OffDelay.state <= 10){ // only turn on if in auto
+        if (Sleep.state.toString == "ON"){ // night state
+                Bulb1_Brightness.sendCommand(30) // lower brightness if the item Sleep is active 
+        }
+        else{
+                Bulb1_Brightness.sendCommand(100) // full brightness is its during day.
+        }
+        Bulb1_Scene.sendCommand(2) // Time based state
+        Bulb1_OffDelay.sendCommand(10) // Set timer
+}
