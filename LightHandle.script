@@ -1,0 +1,65 @@
+// Created By Lasse Byrnak
+// This script is supposed to be triggered every minute.
+// It goes through every bulb of the house and based on the scene condition react according.
+//Item_Scene 0 ~ (nothing to do) The script expects the bulb to be off.
+//Item_Scene 1 ~ For every minute that passes the Item_Brightness will be dimmed 20% down until it reaches 0% then the Item_Scene is changed to 0.
+//Item_Scene 2 ~ For every minute that passes the Item_OffDelay will be reducedby one until it reaches 0. Then the Item_Scene is changed to 1
+//Item_Scene 3 ~ Functions as an disable of the script feature resulting in a constant light on / off depending on you selection.
+
+
+// This first part creates a function to easy handle one light
+  val runlight = [ GenericItem Scene, GenericItem Brightness, GenericItem Offdelay, String navn, Number dbug |
+  var Number nextlevel = 0
+  var Number prevlevel = 0
+  var Number calcval = 0
+
+        if (Scene.state == 1){
+                if (Brightness.state.toString != "NULL" && Brightness.state != 0){
+                        if (dbug == 1){
+                        logDebug("rules","Dimming: "+navn+" with 20%")
+                        }
+                        prevlevel = Brightness.state as Number
+                        if (prevlevel >= 20){
+                                nextlevel = prevlevel-20
+                        }
+                        else{
+                                nextlevel = 0
+                        }
+
+                        Brightness.sendCommand(nextlevel)
+                }
+                if (Brightness.state == 0){
+                        Scene.sendCommand(0)
+                        if (dbug == 1){
+                                logDebug("rules","Done turning off "+navn)
+                        }
+                }
+        }
+        if (Scene.state == 2){
+                if (Offdelay.state > 0 && Offdelay.state.toString != "NULL"){
+                        calcval = Offdelay.state as Number
+                        calcval = calcval - 1
+                        Offdelay.sendCommand(calcval)
+                        if (dbug == 1){
+                                logDebug("rules","1min passed for "+navn)
+                        }
+                }
+                if (Offdelay.state <= 0){
+                        Scene.sendCommand("1")
+                        if (dbug == 1){
+                                logDebug("rules","Changed status for "+navn+" til scene 1")
+                        }
+                }
+        }
+]
+
+// This section takes above function and apply it to every light, alter as you desire
+//1. parameter takes the Item_Scene
+//2. parameter takes the Item_Brightness
+//3. parameter takes the Item_OffDelay
+//4. parameter takes a friendly name of the bulb to pass to the Debugger.
+//5. paramter takes a "1"=Debug on and "0"=Debug off ( for this to work you must enable debug of 'rules' i karaf.
+
+runlight.apply(Bulb1_Scene,Bulb1_Brightness,Bulb1_OffDelay,"lamp 1",1)
+//runlight.apply(Bulb2_Scene,Bulb2_Brightness,Bulb2_OffDelay,"lamp 2",1)
+//runlight.apply(Bulb3_Scene,Bulb3_Brightness,Bulb3_OffDelay,"lamp 3",1)
