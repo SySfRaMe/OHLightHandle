@@ -1,0 +1,9 @@
+//Created by Lasse Byrnak
+
+//This script required the Rules binding
+rule "cron minute"
+when
+  Time cron "0 0/1 * 1/1 * ? *" //Every minute
+then
+  callScript("LightHandle")
+end
