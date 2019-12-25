@@ -1,0 +1,5 @@
+//First Bulb
+// In the Example Philips hue bulbs are used. 
+Dimmer Bulb1_Brightness "Living room" <slider> ["Lighting"] { channel="hue:0210:00178827394a:2:color" }
+Number Bulb1_Scene "Living room - Scene" <settings>
+Number Bulb1_OffDelay "Living room - Timer" <time>
